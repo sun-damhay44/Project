@@ -1,0 +1,77 @@
+import pandas as pd
+from selenium import webdriver
+from selenium.webdriver.common.by import By
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
+import time
+
+# ----------------------------------------------------
+# 1. การตั้งค่าเริ่มต้น
+# ----------------------------------------------------
+# สร้าง WebDriver
+options = webdriver.ChromeOptions()
+options.add_experimental_option("detach", True)
+driver = webdriver.Chrome(options=options)
+
+# กำหนด Base URL และจำนวนหน้ารวม
+BASE_URL = "https://thai.tourismthailand.org/Search-result/attraction?sort_by=datetime_updated_desc&page="
+TOTAL_PAGES = 292  # แก้ไขตามจำนวนหน้าจริงที่ต้องการ
+# XPATH ที่ใช้ดึงลิงก์สถานที่ท่องเที่ยว (ใช้แบบ Relative เพื่อความเสถียร)
+LINK_XPATH = "/html/body/div[1]/div/div/div[2]/div[2]/div/div/div[2]/div/div//a" 
+WAIT_TIME = 10
+all_urls = []
+
+# ----------------------------------------------------
+# 2. การวนลูปดึงข้อมูลทุกหน้า (Pagination)
+# ----------------------------------------------------
+
+# วนลูปตั้งแต่หน้า 1 ถึง TOTAL_PAGES
+for page_number in range(1, TOTAL_PAGES + 1):
+    # 1. สร้าง URL สำหรับหน้านั้นๆ
+    current_url = f"{BASE_URL}{page_number}&perpage=15&menu=attraction"
+    print(f"กำลังประมวลผลหน้า: {page_number}/{TOTAL_PAGES} - URL: {current_url}")
+    
+    # 2. เปิดหน้าเว็บ
+    driver.get(current_url)
+    time.sleep(3)
+    # 3. ใช้ Explicit Wait เพื่อรอ Element แรกปรากฏ (สำคัญมาก)
+    try:
+        WebDriverWait(driver, WAIT_TIME).until(
+            EC.presence_of_element_located((By.XPATH, LINK_XPATH))
+        )
+        
+        # 4. ดึง Element ทั้งหมด
+        elements_a = driver.find_elements(By.XPATH, LINK_XPATH)
+        
+        # 5. วนลูปเก็บ URL
+        page_urls = []
+        for element in elements_a:
+            url = element.get_attribute("href")
+            # ตรวจสอบว่า URL ไม่เป็น None และเป็น URL ที่สมบูรณ์
+            if url and "http" in url:
+                page_urls.append(url)
+
+        # 6. เพิ่ม URL ที่ได้จากหน้านี้เข้า List รวมทั้งหมด
+        all_urls.extend(page_urls)
+        print(f"   -> พบ {len(page_urls)} รายการ (รวมทั้งหมด: {len(all_urls)} รายการ)")
+        
+    except Exception as e:
+        print(f"   -> ❌ ข้อผิดพลาดหรือ Timeout ที่หน้า {page_number}: {e}")
+        # ข้ามไปหน้าถัดไป หากเกิดข้อผิดพลาด
+        continue
+
+# ----------------------------------------------------
+# 3. การจัดเก็บและสรุปผล
+# ----------------------------------------------------
+
+# ปิดเบราว์เซอร์เมื่อทำเสร็จ
+driver.quit() 
+
+# สร้าง DataFrame จาก URL ทั้งหมด
+urls_df = pd.DataFrame({'url': all_urls})
+
+print("\n==================================")
+print(f"✅ การดึงข้อมูลเสร็จสมบูรณ์")
+print(f"จำนวน URL ที่เก็บได้ทั้งหมด: {len(urls_df)}")
+print("ตัวอย่างข้อมูล:")
+print(urls_df.head())
