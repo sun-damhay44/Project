@@ -81,7 +81,7 @@ services:
     container_name: my_data_warehouse
     environment:
       POSTGRES_USER: sun
-      POSTGRES_PASSWORD: sun251044
+      POSTGRES_PASSWORD: __8ตัว__
       POSTGRES_DB: target_db
     ports:
       - "5433:5432" # ใช้ Port 5433 เพื่อไม่ให้ชนกับตัวแรก
