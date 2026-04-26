@@ -13,7 +13,7 @@ FUNCTION = 'TIME_SERIES_DAILY'
 today = datetime.now().strftime('%Y-%m-%d')
 
 # 2. ระบุโฟลเดอร์ปลายทางเป็นชั้น bronze
-output_dir = 'project_7/bronze'
+output_dir = 'bronze'
 
 # 3. แก้ไขชื่อไฟล์ให้มีวันที่ต่อท้าย (เช่น stock_data_2026-04-25.csv)
 master_file_path = os.path.join(output_dir, f'stock_data_{today}.csv')
@@ -34,7 +34,7 @@ def fetch_stock_data(symbol):
             latest_data = data["Time Series (Daily)"][last_refreshed]
 
             df = pd.DataFrame([latest_data])
-            df.columns = ['open', 'high', 'low', 'close', 'volum']
+            df.columns = ['open', 'high', 'low', 'close', 'volume']
             df.insert(0, 'date', last_refreshed)
             df['symbol'] = symbol
             return df
