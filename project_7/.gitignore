@@ -1,0 +1,27 @@
+# --- Python ---
+__pycache__/
+*.py[cod]
+*$py.class
+venv/
+.env
+
+# --- Data (สำคัญมากสำหรับ DE) ---
+# ไม่นำข้อมูลดิบหรือไฟล์ CSV ขึ้น GitHub
+data/
+*.csv
+*.parquet
+*.json
+!daily_batch.yml # ยกเว้นไฟล์ config บางอย่างถ้าจำเป็น
+
+# --- Airflow ---
+logs/
+plugins/
+airflow-init/
+*.cfg
+*.db
+
+# --- OS ---
+.DS_Store
+Thumbs.db
+
+bronze/*
