@@ -24,3 +24,11 @@ jobs:
         env:
           ALPHA_VANTAGE_KEY: ${{ secrets.ALPHA_VANTAGE_KEY }} # เก็บ Key ไว้ใน Secrets เพื่อความปลอดภัย
         run:  python project_7/scripts/extract_stock.py
+
+      - name: Commit and push changes
+        run: |
+          git config --global user.name 'github-actions[bot]'
+          git config --global user.email 'github-actions[bot]@users.noreply.github.com'
+          git add .
+          git commit -m "Auto-update stock data: $(date)" || echo "No changes to commit"
+          git push
