@@ -23,4 +23,4 @@ jobs:
       - name: Run Extraction Script
         env:
           ALPHA_VANTAGE_KEY: ${{ secrets.ALPHA_VANTAGE_KEY }} # เก็บ Key ไว้ใน Secrets เพื่อความปลอดภัย
-        run:  python scripts/extract_stock.py
+        run:  python project_7/scripts/extract_stock.py
