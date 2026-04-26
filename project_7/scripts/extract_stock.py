@@ -34,7 +34,7 @@ def fetch_stock_data(symbol):
             latest_data = data["Time Series (Daily)"][last_refreshed]
 
             df = pd.DataFrame([latest_data])
-            df.columns = ['open', 'high', 'low', 'close', 'volume']
+            df.columns = ['open', 'high', 'low', 'close', 'volum']
             df.insert(0, 'date', last_refreshed)
             df['symbol'] = symbol
             return df
