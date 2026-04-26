@@ -24,4 +24,4 @@ airflow-init/
 .DS_Store
 Thumbs.db
 
-bronze/*
+# bronze
